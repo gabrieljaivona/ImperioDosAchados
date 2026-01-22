@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  /* --- MAPEAMENTO PARA O TAILWIND --- */
+  /* Isso cria as classes: bg-imperio-bg, text-imperio-text, etc. */
+  
+  --color-imperio-bg: var(--bg-primary);
+  --color-imperio-surface: var(--bg-secondary);
+  
+  --color-imperio-text: var(--text-primary);
+  --color-imperio-muted: var(--text-secondary);
+  
+  --color-imperio-gold: var(--brand-gold);
+  --color-imperio-bronze: var(--brand-bronze);
+  --color-imperio-action: var(--brand-action);
+  
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* --- DEFINIÇÃO DOS TEMAS --- */
+
+/* 1. O Padrão (DARK MODE / IMPÉRIO ORIGINAL) */
+:root {
+  --bg-primary: #0A0D0C;      /* Preto profundo */
+  --bg-secondary: #181C1B;    /* Preto suave (cards) */
+  
+  --text-primary: #F2E9CE;    /* Creme (leitura) */
+  --text-secondary: #8C8372;  /* Marrom acinzentado */
+  
+  --brand-gold: #BFB49F;      /* Dourado Pálido */
+  --brand-bronze: #595143;    /* Bronze */
+  --brand-action: #D4AF37;    /* Dourado Vivo */
+}
+
+/* 2. O Alternativo (LIGHT MODE / "LUXO DIURNO") */
+/* Quando a tag HTML tiver data-theme="light", essas cores assumem */
+:root[data-theme="light"] {
+  --bg-primary: #F9F7F2;      /* Creme quase branco (muito elegante) */
+  --bg-secondary: #FFFFFF;    /* Branco puro (cards) */
+  
+  --text-primary: #1A1A1A;    /* Preto quase total */
+  --text-secondary: #595143;  /* Bronze escuro */
+  
+  --brand-gold: #A69B85;      /* Um dourado um pouco mais escuro para contraste */
+  --brand-bronze: #E5E0D6;    /* Bege claro para bordas */
+  --brand-action: #B8860B;    /* Dourado escuro */
+}
+
+/* Configuração Base */
+body {
+  background-color: var(--color-imperio-bg);
+  color: var(--color-imperio-text);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease; /* Animação suave na troca */
+}
