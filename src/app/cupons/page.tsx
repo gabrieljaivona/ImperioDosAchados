@@ -1,8 +1,32 @@
+import type { Metadata } from "next";
+import { Ticket } from "lucide-react";
+import { CuponsClient } from "@/components/CuponsClient";
+import { getCoupons } from "@/lib/coupons";
 
-export default function Cupons() {
+export const metadata: Metadata = {
+  title: "Cupons de Desconto Ativos | Império Dos Achados",
+  description: "Cupons de desconto das principais lojas, atualizados e prontos para copiar.",
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function Cupons() {
+  const coupons = await getCoupons();
+
   return (
-   <div>
-    
-   </div>
+    <div className="mx-auto w-full max-w-7xl bg-imperio-bg p-4 sm:p-6">
+      <header className="mb-6">
+        <h1 className="flex items-center gap-2 text-2xl font-extrabold text-imperio-text sm:text-3xl">
+          <Ticket className="text-imperio-gold" />
+          Cupons de Desconto Ativos
+        </h1>
+        <p className="mt-1 text-sm text-imperio-muted">
+          Copie o código, vá até a loja e aplique no carrinho para economizar
+          ainda mais.
+        </p>
+      </header>
+
+      <CuponsClient coupons={coupons} />
+    </div>
   );
 }

@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id                 String   @id @default(cuid())
+  /// Slug livre em minúsculas (ex.: "shopee", "mercadolivre"); lojas novas são aceitas.
+  store              String
+  /// ID do item na loja (itemId). Sem ele, o bot usa o próprio affiliateLink.
+  externalId         String
+  title              String
+  image              String
+  price              Decimal  @db.Decimal(10, 2)
+  /// Preço "de", opcional. O site só exibe, nunca calcula.
+  originalPrice      Decimal? @db.Decimal(10, 2)
+  /// Já calculado pelo bot (0-100).
+  discountPercentage Int
+  rating             Float?
+  affiliateLink      String
+  featured           Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([store, externalId])
+  @@index([createdAt])
+  @@index([discountPercentage])
+}
+
+model Coupon {
+  id        String    @id @default(cuid())
+  store     String
+  title     String
+  discount  String
+  code      String
+  link      String
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([store, code])
+  @@index([expiresAt])
+}
