@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MetaPixel } from "@/components/MetaPixel";
+import { CookieBanner } from "@/components/CookieBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning> 
+    <html lang="pt-BR" suppressHydrationWarning>
       {/* Nota: suppressHydrationWarning é necessário no <html> ao usar next-themes 
           para evitar erro de console se o tema do usuário for diferente do servidor */}
       <body
@@ -44,6 +45,7 @@ export default function RootLayout({
           <Header />
           <main className="min-h-screen">{children}</main>
           <Footer />
+          <CookieBanner />
         </ThemeProvider>
       </body>
     </html>

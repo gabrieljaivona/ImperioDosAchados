@@ -5,6 +5,8 @@ const LINKS = [
   { label: "Produtos", href: "/produtos" },
   { label: "Cupons", href: "/cupons" },
   { label: "Sobre", href: "/sobre" },
+  { label: "Privacidade", href: "/privacidade" },
+  { label: "Termos", href: "/termos" },
 ];
 
 export function Footer() {
@@ -19,7 +21,7 @@ export function Footer() {
             <Crown size={22} className="text-imperio-action" />
             Império Dos Achados
           </Link>
-          <nav className="flex gap-6 text-sm text-imperio-muted">
+          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-imperio-muted">
             {LINKS.map((link) => (
               <Link
                 key={link.href}

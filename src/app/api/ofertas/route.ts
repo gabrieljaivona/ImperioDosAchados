@@ -13,6 +13,9 @@ const hits = new Map<string, { count: number; resetAt: number }>();
 
 function rateLimited(ip: string) {
   const now = Date.now();
+  if (hits.size > 1000) {
+    for (const [key, value] of hits) if (value.resetAt < now) hits.delete(key);
+  }
   const entry = hits.get(ip);
   if (!entry || entry.resetAt < now) {
     hits.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
@@ -44,10 +47,15 @@ function fail(status: number, error: string, details?: unknown) {
  * `code` presente → cupom; caso contrário → produto.
  */
 export async function POST(req: NextRequest) {
-  if (!isAuthorized(req)) return fail(401, "Não autorizado");
-
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "local";
   if (rateLimited(ip)) return fail(429, "Muitas requisições");
+
+  if (!isAuthorized(req)) return fail(401, "Não autorizado");
+
+  const declaredLength = Number(req.headers.get("content-length") ?? 0);
+  if (declaredLength > MAX_BODY_BYTES) {
+    return fail(413, "Corpo grande demais");
+  }
 
   const raw = await req.text();
   if (Buffer.byteLength(raw) > MAX_BODY_BYTES) {
@@ -70,12 +78,17 @@ export async function POST(req: NextRequest) {
 
     const { expiresAt, ...rest } = parsed.data;
     const data = { ...rest, expiresAt: expiresAt ? new Date(expiresAt) : null };
-    const coupon = await prisma.coupon.upsert({
-      where: { store_code: { store: data.store, code: data.code } },
-      create: data,
-      update: data,
-    });
-    return NextResponse.json({ ok: true, type: "coupon", id: coupon.id });
+    try {
+      const coupon = await prisma.coupon.upsert({
+        where: { store_code: { store: data.store, code: data.code } },
+        create: data,
+        update: data,
+      });
+      return NextResponse.json({ ok: true, type: "coupon", id: coupon.id });
+    } catch (err) {
+      console.error("[api/ofertas] falha ao salvar cupom", err);
+      return fail(500, "Erro ao salvar cupom");
+    }
   }
 
   const parsed = productSchema.safeParse(body);
@@ -83,10 +96,15 @@ export async function POST(req: NextRequest) {
 
   const { itemId, ...rest } = parsed.data;
   const data = { ...rest, externalId: itemId ?? rest.affiliateLink };
-  const product = await prisma.product.upsert({
-    where: { store_externalId: { store: data.store, externalId: data.externalId } },
-    create: data,
-    update: data,
-  });
-  return NextResponse.json({ ok: true, type: "product", id: product.id });
+  try {
+    const product = await prisma.product.upsert({
+      where: { store_externalId: { store: data.store, externalId: data.externalId } },
+      create: data,
+      update: data,
+    });
+    return NextResponse.json({ ok: true, type: "product", id: product.id });
+  } catch (err) {
+    console.error("[api/ofertas] falha ao salvar produto", err);
+    return fail(500, "Erro ao salvar produto");
+  }
 }
