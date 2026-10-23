@@ -18,8 +18,12 @@ function toProduct(row: Row): Product {
   };
 }
 
-export async function getProducts(): Promise<Product[]> {
-  const rows = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
+/** Lista para /produtos, limitada para não sobrecarregar o banco. */
+export async function getProducts(limit = 100): Promise<Product[]> {
+  const rows = await prisma.product.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
   return rows.map(toProduct);
 }
 

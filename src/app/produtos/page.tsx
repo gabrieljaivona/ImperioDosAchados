@@ -4,7 +4,7 @@ import { ProductsClient } from "@/components/ProductsClient";
 import { getProducts } from "@/lib/products";
 
 export const metadata: Metadata = {
-  title: "Todas as Ofertas e Achadinhos | Império Dos Achados",
+  title: "Todas as Ofertas e Achadinhos",
   description: "Busque e filtre as melhores ofertas por loja.",
 };
 

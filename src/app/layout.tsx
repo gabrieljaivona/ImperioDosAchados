@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MetaPixel } from "@/components/MetaPixel";
 import { CookieBanner } from "@/components/CookieBanner";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,8 +19,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Império Dos Achados",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Império Dos Achados",
+    template: "%s | Império Dos Achados",
+  },
   description: "As melhores ofertas da internet em um só lugar.",
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Império Dos Achados",
+    title: "Império Dos Achados",
+    description: "As melhores ofertas da internet em um só lugar.",
+    url: "/",
+  },
+  twitter: {
+    card: "summary",
+    title: "Império Dos Achados",
+    description: "As melhores ofertas da internet em um só lugar.",
+  },
 };
 
 export default function RootLayout({

@@ -1,17 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Headphones, Sparkles, Tag, Zap } from "lucide-react";
+import { ArrowRight, Headphones, PackageOpen, Sparkles, Tag, Zap } from "lucide-react";
 import { CompactProductCard } from "@/components/CompactProductCard";
 import { VipCTAButton } from "@/components/VipCTAButton";
 import { getFeaturedProducts, getFlashProducts } from "@/lib/products";
 import type { Product } from "@/types";
-
-const CATEGORIES = [
-  { emoji: "🔥", label: "Em Alta" },
-  { emoji: "🍳", label: "Cozinha Prática" },
-  { emoji: "🏠", label: "Organização" },
-  { emoji: "✨", label: "Cuidado Pessoal" },
-  { emoji: "📦", label: "Utilidades" },
-];
 
 const GRID =
   "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
@@ -34,6 +27,13 @@ function ProductGrid({ products }: { products: Product[] }) {
     </div>
   );
 }
+
+export const metadata: Metadata = {
+  title: { absolute: "Império Dos Achados | Ofertas, Cupons e Achadinhos" },
+  description:
+    "Ofertas relâmpago e cupons de Shopee, Amazon, Mercado Livre e Magalu, atualizados todo dia. Entre no grupo VIP e economize.",
+  alternates: { canonical: "/" },
+};
 
 export const dynamic = "force-dynamic";
 
@@ -94,21 +94,22 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Categorias rápidas */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap">
-          {CATEGORIES.map(({ emoji, label }) => (
-            <Link
-              key={label}
-              href="/produtos"
-              className="shrink-0 rounded-full border border-imperio-bronze bg-imperio-surface px-4 py-2 text-sm font-medium text-imperio-text transition-colors hover:border-imperio-gold"
-            >
-              {emoji} {label}
-            </Link>
-          ))}
-        </div>
-      </section>
-
+      {flash.length === 0 && featured.length === 0 ? (
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-imperio-bronze bg-imperio-surface px-6 py-14 text-center">
+            <PackageOpen size={44} className="text-imperio-gold" />
+            <h2 className="text-xl font-bold text-imperio-text">
+              Novas ofertas chegando
+            </h2>
+            <p className="max-w-md text-sm text-imperio-muted">
+              Ainda não temos achadinhos por aqui. Entre no grupo VIP para
+              receber as ofertas assim que elas saírem.
+            </p>
+            <VipCTAButton />
+          </div>
+        </section>
+      ) : (
+        <>
       {/* Ofertas Relâmpago */}
       <section className="mt-10 bg-imperio-surface py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -127,6 +128,8 @@ export default async function Home() {
         </h2>
         <ProductGrid products={featured} />
       </section>
+        </>
+      )}
 
       {/* CTA final */}
       <section className="px-4 pb-16 text-center">

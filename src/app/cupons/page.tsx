@@ -4,7 +4,7 @@ import { CuponsClient } from "@/components/CuponsClient";
 import { getCoupons } from "@/lib/coupons";
 
 export const metadata: Metadata = {
-  title: "Cupons de Desconto Ativos | Império Dos Achados",
+  title: "Cupons de Desconto Ativos",
   description: "Cupons de desconto das principais lojas, atualizados e prontos para copiar.",
 };
 
