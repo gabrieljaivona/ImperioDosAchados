@@ -47,12 +47,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      {/* Nota: suppressHydrationWarning é necessário no <html> ao usar next-themes 
-          para evitar erro de console se o tema do usuário for diferente do servidor */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* 2. Configure o Provider para usar data-theme (como fizemos no CSS) */}
         <MetaPixel />
         <ThemeProvider
           attribute="data-theme"

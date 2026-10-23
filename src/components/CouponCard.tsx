@@ -66,6 +66,9 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
           >
             {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
             {copied ? "Copiado!" : "Copiar Código"}
+            <span className="sr-only" role="status" aria-live="polite">
+              {copied ? "Código copiado" : ""}
+            </span>
           </button>
           <a
             href={coupon.link}
@@ -74,7 +77,8 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-imperio-gold px-3 py-2 text-sm font-bold text-zinc-950 transition hover:brightness-110"
           >
             Usar Cupom
-            <ExternalLink size={16} />
+            <span className="sr-only"> (abre em nova aba)</span>
+            <ExternalLink aria-hidden size={16} />
           </a>
         </div>
       </div>

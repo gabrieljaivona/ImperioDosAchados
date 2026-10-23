@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Flame } from "lucide-react";
+import { AffiliateNotice } from "@/components/AffiliateNotice";
 import { ProductsClient } from "@/components/ProductsClient";
 import { getProducts } from "@/lib/products";
 
@@ -25,6 +26,7 @@ export default async function ProdutosPage() {
         </p>
       </header>
 
+      <AffiliateNotice />
       <ProductsClient products={products} />
     </div>
   );

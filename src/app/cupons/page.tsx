@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Ticket } from "lucide-react";
+import { AffiliateNotice } from "@/components/AffiliateNotice";
 import { CuponsClient } from "@/components/CuponsClient";
 import { getCoupons } from "@/lib/coupons";
 
@@ -26,6 +27,7 @@ export default async function Cupons() {
         </p>
       </header>
 
+      <AffiliateNotice />
       <CuponsClient coupons={coupons} />
     </div>
   );

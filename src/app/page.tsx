@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Headphones, PackageOpen, Sparkles, Tag, Zap } from "lucide-react";
+import { AffiliateNotice } from "@/components/AffiliateNotice";
 import { CompactProductCard } from "@/components/CompactProductCard";
 import { VipCTAButton } from "@/components/VipCTAButton";
 import { getFeaturedProducts, getFlashProducts } from "@/lib/products";
@@ -117,6 +118,7 @@ export default async function Home() {
             <Zap className="text-orange-500" />
             Ofertas Relâmpago
           </h2>
+          <AffiliateNotice />
           <ProductGrid products={flash} />
         </div>
       </section>

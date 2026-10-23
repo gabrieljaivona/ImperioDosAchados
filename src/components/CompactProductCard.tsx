@@ -34,7 +34,7 @@ export function CompactProductCard({
     <a
       href={affiliateLink}
       target="_blank"
-      rel="sponsored noopener"
+      rel="noopener noreferrer sponsored"
       className="group flex flex-col overflow-hidden rounded-xl border border-imperio-bronze bg-imperio-surface transition-colors hover:border-imperio-gold"
     >
       <div className="relative aspect-square w-full bg-imperio-bg">
@@ -64,6 +64,7 @@ export function CompactProductCard({
       <div className="flex flex-1 flex-col gap-1 p-2.5">
         <h3 className="line-clamp-2 min-h-[2.5rem] text-sm text-imperio-text">
           {title}
+          <span className="sr-only"> (abre em nova aba)</span>
         </h3>
 
         <div className="mt-auto flex flex-col">
@@ -77,6 +78,7 @@ export function CompactProductCard({
               {formatPrice(discountPrice)}
             </span>
             <ExternalLink
+              aria-hidden
               size={14}
               className="text-orange-500 transition-transform group-hover:translate-x-0.5"
             />
