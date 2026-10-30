@@ -19,7 +19,7 @@ function toProduct(row: Row): Product {
 }
 
 /** Lista para /produtos, limitada para não sobrecarregar o banco. */
-export async function getProducts(limit = 100): Promise<Product[]> {
+export async function getProducts(limit = 200): Promise<Product[]> {
   const rows = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },
     take: limit,

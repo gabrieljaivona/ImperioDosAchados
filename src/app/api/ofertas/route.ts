@@ -42,10 +42,6 @@ function fail(status: number, error: string, details?: unknown) {
   return NextResponse.json({ ok: false, error, details }, { status });
 }
 
-/**
- * Recebe ofertas e cupons do bot. O tipo é inferido pelo corpo:
- * `code` presente → cupom; caso contrário → produto.
- */
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "local";
   if (rateLimited(ip)) return fail(429, "Muitas requisições");
