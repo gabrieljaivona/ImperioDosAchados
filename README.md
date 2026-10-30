@@ -8,7 +8,7 @@ BotImperioDosAchados ──POST /api/ofertas (Bearer)──▶ Next.js ──Pri
 
 ## Stack
 
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 · next-themes · Prisma 6 + PostgreSQL · Zod 4 · lucide-react · ESLint 9
+Next.js 16.1.4 (App Router, versão fixa) · React 19 · TypeScript · Tailwind v4 · next-themes · Prisma 6 + PostgreSQL · Zod 4 · lucide-react · ESLint 9
 
 ## Variáveis de ambiente
 
@@ -32,7 +32,7 @@ npx prisma migrate dev # aplica migrations no banco local
 npm run dev
 ```
 
-Scripts: `dev`, `build` (`prisma generate && next build`), `start`, `lint`, `migrate` (`prisma migrate deploy`).
+Scripts: `dev`, `build` (`prisma generate && next build --webpack`), `start`, `lint`, `migrate` (`prisma migrate deploy`).
 
 ## Deploy na Hostinger
 
@@ -44,6 +44,8 @@ Scripts: `dev`, `build` (`prisma generate && next build`), `start`, `lint`, `mig
 6. Compile: `npm run build`.
 7. Inicie: `npm run start`.
 8. Aponte o bot para `https://SEU_DOMINIO/api/ofertas` com o mesmo `SITE_API_TOKEN`.
+
+> **Versão do Next.js:** mantenha `next` fixo em `16.1.4` (sem `^`). A 16.4.3 falha na Hostinger com `GLIBC_2.29 not found` (binário do SWC exige glibc mais novo que o do servidor). O build usa webpack pelo mesmo motivo de compatibilidade. Só atualize após confirmar o glibc do servidor.
 
 A cada deploy com mudança em `prisma/`, rode `npm run migrate` antes de reiniciar.
 

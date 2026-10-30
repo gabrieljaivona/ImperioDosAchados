@@ -14,7 +14,7 @@ BotImperioDosAchados (Python) ──POST /api/ofertas (Bearer)──▶ Next.js 
 
 - **Hospedagem:** Hostinger (app Next.js + banco PostgreSQL).
 - **Banco:** PostgreSQL via Prisma (`prisma/schema.prisma`, client em `src/lib/db.ts`).
-- **Env vars** (ver `.env.example`): `DATABASE_URL`, `SITE_API_TOKEN`, `NEXT_PUBLIC_META_PIXEL_ID`, `NEXT_PUBLIC_VIP_GROUP_URL`.
+- **Env vars** (ver `.env.example`): `DATABASE_URL`, `SITE_API_TOKEN`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_META_PIXEL_ID`, `NEXT_PUBLIC_VIP_GROUP_URL`. As `NEXT_PUBLIC_*` são embutidas no build.
 
 ### Modelos
 
@@ -39,20 +39,22 @@ Arquivo: `src/app/api/ofertas/route.ts`; validação em `src/lib/ingest-schemas.
 Todas leem do Prisma em tempo real (`force-dynamic`):
 
 - `/` — Ofertas Relâmpago (maior `discountPercentage`, 4) e Destaques da Semana (mais recentes, 8).
-- `/produtos` — todas as ofertas (mais recentes), busca e filtro por loja.
+- `/produtos` — até 100 ofertas (mais recentes), busca e filtro por loja.
 - `/cupons` — cupons não expirados (`expiresAt` nulo ou futuro), filtro por loja.
-- `/sobre`, `/api/ofertas`.
+- `/sobre`, `/privacidade`, `/termos`, `/sitemap.xml`, `/robots.txt`, `/api/ofertas`.
 
 Camada de dados: `src/lib/products.ts` (`getProducts`, `getFeaturedProducts`, `getFlashProducts`) e `src/lib/coupons.ts` (`getCoupons`). Não há mais mocks/JSON estáticos.
 
 ## Stack
 
-Next.js 16.1.4 (App Router), React 19.2.3, TypeScript strict (alias `@/*` → `src/*`), Tailwind v4 (CSS-first em `src/app/globals.css`, sem `tailwind.config`), next-themes (`data-theme` no `<html>`), lucide-react, Prisma 6 + PostgreSQL, Zod 4, ESLint 9. Sem framework de testes.
+Next.js **16.1.4 fixo, sem `^`** (App Router), React 19.2.3, TypeScript strict (alias `@/*` → `src/*`), Tailwind v4 (CSS-first em `src/app/globals.css`, sem `tailwind.config`), next-themes (`data-theme` no `<html>`), lucide-react, Prisma 6 + PostgreSQL, Zod 4, ESLint 9. Sem framework de testes.
+
+**Não atualizar o Next.js** além de 16.1.4 sem antes confirmar o glibc da Hostinger: a 16.4.3 quebrou o deploy (`GLIBC_2.29 not found` ao carregar o SWC/`next.config.ts`). O build usa **webpack** (`next build --webpack`), não Turbopack, também por compatibilidade com a Hostinger. `npm run build` = `prisma generate && next build --webpack`.
 
 ```
 npm run dev | build | start | lint
 npx prisma migrate dev     # desenvolvimento (precisa de DATABASE_URL)
-npx prisma migrate deploy  # produção
+npx prisma migrate deploy  # produção (ou `npm run migrate`)
 ```
 
 ## Convenções
