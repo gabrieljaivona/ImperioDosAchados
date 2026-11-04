@@ -15,6 +15,7 @@ function toProduct(row: Row): Product {
     store: row.store,
     affiliateLink: row.affiliateLink,
     featured: row.featured,
+    category: row.category,
   };
 }
 

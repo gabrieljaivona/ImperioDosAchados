@@ -20,6 +20,7 @@ function normalize(text: string) {
 export function ProductsClient({ products }: { products: Product[] }) {
   const [query, setQuery] = useState("");
   const [store, setStore] = useState<StoreFilter>("todas");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -35,20 +36,31 @@ export function ProductsClient({ products }: { products: Product[] }) {
     [products]
   );
 
+  const categories = useMemo(
+    () =>
+      [
+        ...new Set(
+          products.map((p) => p.category).filter((c): c is string => !!c)
+        ),
+      ].sort(),
+    [products]
+  );
+
   const filtered = useMemo(() => {
     const term = normalize(query.trim());
     return products.filter(
       (p) =>
         (store === "todas" || p.store === store) &&
+        (!selectedCategory || p.category === selectedCategory) &&
         (!term || normalize(p.title).includes(term))
     );
-  }, [products, query, store]);
+  }, [products, query, store, selectedCategory]);
 
   const displayedProducts = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
   // Volta ao início da lista quando os filtros mudam (ajuste durante o render).
-  const filterKey = `${store}|${query}`;
+  const filterKey = `${store}|${query}|${selectedCategory}`;
   const [lastFilterKey, setLastFilterKey] = useState(filterKey);
   if (filterKey !== lastFilterKey) {
     setLastFilterKey(filterKey);
@@ -119,6 +131,29 @@ export function ProductsClient({ products }: { products: Product[] }) {
           );
         })}
       </div>
+
+      {categories.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
+          {[null, ...categories].map((cat) => {
+            const active = selectedCategory === cat;
+            return (
+              <button
+                key={cat ?? "todas"}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                aria-pressed={active}
+                className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium capitalize transition-colors ${
+                  active
+                    ? "border-imperio-gold bg-imperio-gold text-zinc-950"
+                    : "border-imperio-bronze bg-imperio-surface text-imperio-text hover:border-imperio-gold"
+                }`}
+              >
+                {cat ?? "Todas as Categorias"}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <p className="text-xs text-imperio-muted">
         {filtered.length} {filtered.length === 1 ? "oferta" : "ofertas"}{" "}

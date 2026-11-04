@@ -12,6 +12,8 @@ export interface Product {
   store: Store;
   affiliateLink: string;
   featured: boolean;
+  /** Categoria livre em minúsculas, enviada pelo bot. */
+  category?: string | null;
 }
 
 export interface Coupon {

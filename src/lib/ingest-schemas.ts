@@ -28,6 +28,11 @@ export const productSchema = z.object({
   rating: z.number().min(0).max(5).nullish(),
   affiliateLink: httpsUrl,
   featured: z.boolean().optional(),
+  category: z
+    .string()
+    .max(50)
+    .optional()
+    .transform((val) => val?.toLowerCase().trim() || undefined),
 });
 
 export const couponSchema = z.object({
