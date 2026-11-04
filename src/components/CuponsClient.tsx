@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { TicketX } from "lucide-react";
+import { Search, TicketX, X } from "lucide-react";
 import { CouponCard } from "@/components/CouponCard";
 import { VipCTAButton } from "@/components/VipCTAButton";
 import { getStoreConfig, type Store } from "@/lib/stores";
@@ -13,6 +13,7 @@ const PAGE_SIZE = 20;
 
 export function CuponsClient({ coupons }: { coupons: Coupon[] }) {
   const [store, setStore] = useState<StoreFilter>("todos");
+  const [searchQuery, setSearchQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -24,14 +25,21 @@ export function CuponsClient({ coupons }: { coupons: Coupon[] }) {
     })),
   ];
 
-  const visible =
-    store === "todos" ? coupons : coupons.filter((c) => c.store === store);
+  // Cupom não tem "description": busca em título, desconto e código.
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visible = coupons.filter((c) => {
+    if (store !== "todos" && c.store !== store) return false;
+    if (!normalizedQuery) return true;
+    return [c.title, c.discount, c.code].some((field) =>
+      field.toLowerCase().includes(normalizedQuery)
+    );
+  });
 
   const displayedCoupons = visible.slice(0, visibleCount);
   const hasMore = visibleCount < visible.length;
 
   // Volta ao início da lista quando o filtro muda (ajuste durante o render).
-  const filterKey = store;
+  const filterKey = `${store}|${searchQuery}`;
   const [lastFilterKey, setLastFilterKey] = useState(filterKey);
   if (filterKey !== lastFilterKey) {
     setLastFilterKey(filterKey);
@@ -57,6 +65,31 @@ export function CuponsClient({ coupons }: { coupons: Coupon[] }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="relative">
+        <Search
+          size={18}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-imperio-muted"
+        />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Buscar cupom..."
+          aria-label="Buscar cupom"
+          className="w-full rounded-xl border border-imperio-bronze bg-imperio-surface py-2.5 pl-10 pr-10 text-sm text-imperio-text placeholder:text-imperio-muted focus:border-imperio-gold focus:outline-none"
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery("")}
+            aria-label="Limpar busca"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-imperio-muted hover:text-imperio-text"
+          >
+            <X size={18} />
+          </button>
+        )}
+      </div>
+
       <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
         {storeFilters.map(({ value, label }) => {
           const active = store === value;
@@ -97,7 +130,9 @@ export function CuponsClient({ coupons }: { coupons: Coupon[] }) {
         <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-imperio-bronze py-14 text-center">
           <TicketX size={40} className="text-imperio-muted" />
           <p className="text-imperio-text">
-            Nenhum cupom disponível no momento.
+            {searchQuery || store !== "todos"
+              ? "Nenhum cupom encontrado para essa busca."
+              : "Nenhum cupom disponível no momento."}
           </p>
           <p className="max-w-sm px-4 text-sm text-imperio-muted">
             Entre no grupo VIP e peça o cupom da sua loja favorita.
