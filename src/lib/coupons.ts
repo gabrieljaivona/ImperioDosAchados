@@ -10,6 +10,7 @@ export async function getCoupons(store?: Store): Promise<Coupon[]> {
       OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
     },
     orderBy: { createdAt: "desc" },
+    take: 200,
   });
   return rows.map((c) => ({
     id: c.id,
