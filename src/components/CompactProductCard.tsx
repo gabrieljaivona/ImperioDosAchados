@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import { ExternalLink, Tag } from "lucide-react";
+import { trackOfferClick } from "@/lib/meta-pixel";
 import { getStoreConfig, type Store } from "@/lib/stores";
 
 interface CompactProductCardProps {
+  id: string;
   imageUrl: string;
   title: string;
   originalPrice?: number | null;
@@ -20,6 +24,7 @@ function formatPrice(value: number) {
 }
 
 export function CompactProductCard({
+  id,
   imageUrl,
   title,
   originalPrice,
@@ -33,6 +38,14 @@ export function CompactProductCard({
   return (
     <a
       href={affiliateLink}
+      onClick={() =>
+        trackOfferClick({
+          store,
+          title,
+          discount: discountPercentage,
+          id,
+        })
+      }
       target="_blank"
       rel="noopener noreferrer sponsored"
       className="group flex flex-col overflow-hidden rounded-xl border border-imperio-bronze bg-imperio-surface transition-colors hover:border-imperio-gold"

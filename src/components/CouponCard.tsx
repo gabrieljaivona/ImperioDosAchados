@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Check, Copy, ExternalLink } from "lucide-react";
+import { trackCouponClick } from "@/lib/meta-pixel";
 import { getStoreConfig } from "@/lib/stores";
 import type { Coupon } from "@/types";
 
@@ -21,6 +22,12 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
   }, [copied]);
 
   async function handleCopy() {
+    trackCouponClick({
+      store: coupon.store,
+      title: coupon.title,
+      code: coupon.code,
+      action: "copy",
+    });
     try {
       await navigator.clipboard.writeText(coupon.code);
       setCopied(true);
@@ -72,6 +79,14 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
           </button>
           <a
             href={coupon.link}
+            onClick={() =>
+              trackCouponClick({
+                store: coupon.store,
+                title: coupon.title,
+                code: coupon.code,
+                action: "go_to_store",
+              })
+            }
             target="_blank"
             rel="noopener noreferrer sponsored"
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-imperio-gold px-3 py-2 text-sm font-bold text-zinc-950 transition hover:brightness-110"

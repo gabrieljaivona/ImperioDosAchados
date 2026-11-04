@@ -6,8 +6,30 @@ declare global {
   }
 }
 
-export function trackLead() {
+function fbqSafe(...args: unknown[]) {
   if (typeof window !== "undefined" && typeof window.fbq === "function") {
-    window.fbq("track", "Lead");
+    window.fbq(...args);
   }
+}
+
+export function trackLead() {
+  fbqSafe("track", "Lead");
+}
+
+export function trackOfferClick(params: {
+  store: string;
+  title: string;
+  discount: number;
+  id: string;
+}) {
+  fbqSafe("trackCustom", "OfferClick", params);
+}
+
+export function trackCouponClick(params: {
+  store: string;
+  title: string;
+  code: string;
+  action: "copy" | "go_to_store";
+}) {
+  fbqSafe("trackCustom", "CouponClick", params);
 }

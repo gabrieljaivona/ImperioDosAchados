@@ -16,6 +16,7 @@ function ProductGrid({ products }: { products: Product[] }) {
       {products.map((p) => (
         <CompactProductCard
           key={p.id}
+          id={p.id}
           imageUrl={p.image}
           title={p.title}
           originalPrice={p.originalPrice}

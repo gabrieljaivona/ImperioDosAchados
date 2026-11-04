@@ -166,6 +166,7 @@ export function ProductsClient({ products }: { products: Product[] }) {
           {displayedProducts.map((p) => (
             <CompactProductCard
               key={p.id}
+              id={p.id}
               imageUrl={p.image}
               title={p.title}
               originalPrice={p.originalPrice}
