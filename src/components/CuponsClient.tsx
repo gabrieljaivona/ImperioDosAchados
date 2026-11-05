@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, TicketX, X } from "lucide-react";
 import { CouponCard } from "@/components/CouponCard";
+import { CouponCardSkeleton } from "@/components/CouponCardSkeleton";
 import { VipCTAButton } from "@/components/VipCTAButton";
 import { getStoreConfig, type Store } from "@/lib/stores";
 import type { Coupon } from "@/types";
@@ -118,11 +119,17 @@ export function CuponsClient({ coupons }: { coupons: Coupon[] }) {
               <CouponCard key={coupon.id} coupon={coupon} />
             ))}
           </section>
-          <div ref={observerTarget} className="flex justify-center p-4">
+          <div ref={observerTarget} className="min-h-4">
             {hasMore && (
-              <span className="text-xs text-imperio-muted" role="status">
-                Carregando mais...
-              </span>
+              <div
+                role="status"
+                aria-label="Carregando mais cupons"
+                className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+              >
+                {Array.from({ length: 3 }, (_, i) => (
+                  <CouponCardSkeleton key={i} />
+                ))}
+              </div>
             )}
           </div>
         </>

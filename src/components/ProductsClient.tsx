@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PackageSearch, Search, X } from "lucide-react";
 import { CompactProductCard } from "@/components/CompactProductCard";
+import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import { getStoreConfig, type Store } from "@/lib/stores";
 import type { Product } from "@/types";
 
@@ -177,11 +178,17 @@ export function ProductsClient({ products }: { products: Product[] }) {
             />
           ))}
         </section>
-        <div ref={observerTarget} className="flex justify-center p-4">
+        <div ref={observerTarget} className="min-h-4">
           {hasMore && (
-            <span className="text-xs text-imperio-muted" role="status">
-              Carregando mais...
-            </span>
+            <div
+              role="status"
+              aria-label="Carregando mais ofertas"
+              className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            >
+              {Array.from({ length: 4 }, (_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
           )}
         </div>
         </>

@@ -48,7 +48,7 @@ export function CompactProductCard({
       }
       target="_blank"
       rel="noopener noreferrer sponsored"
-      className="group flex flex-col overflow-hidden rounded-xl border border-imperio-bronze bg-imperio-surface transition-colors hover:border-imperio-gold"
+      className="group flex flex-col overflow-hidden rounded-xl border border-imperio-bronze bg-imperio-surface transition duration-150 hover:-translate-y-0.5 hover:border-imperio-gold hover:shadow-lg active:scale-95"
     >
       <div className="relative aspect-square w-full bg-imperio-bg">
         <span
