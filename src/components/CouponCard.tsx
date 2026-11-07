@@ -36,6 +36,15 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
     }
   }
 
+  function handleGoToStore() {
+    trackCouponClick({
+      store: coupon.store,
+      title: coupon.title,
+      code: coupon.code,
+      action: "go_to_store",
+    });
+  }
+
   return (
     <article className="flex flex-col overflow-hidden rounded-2xl border-2 border-dashed border-imperio-bronze bg-imperio-surface transition-colors hover:border-imperio-gold">
       <div className="flex flex-col gap-2 p-4">
@@ -79,14 +88,11 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
           </button>
           <a
             href={coupon.link}
-            onClick={() =>
-              trackCouponClick({
-                store: coupon.store,
-                title: coupon.title,
-                code: coupon.code,
-                action: "go_to_store",
-              })
-            }
+            onClick={handleGoToStore}
+            // Botão do meio do mouse abre em nova aba sem disparar onClick.
+            onAuxClick={(e) => {
+              if (e.button === 1) handleGoToStore();
+            }}
             target="_blank"
             rel="noopener noreferrer sponsored"
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-imperio-gold px-3 py-2 text-sm font-bold text-zinc-950 transition hover:brightness-110 active:scale-95"
