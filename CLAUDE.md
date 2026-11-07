@@ -36,7 +36,7 @@ Arquivo: `src/app/api/ofertas/route.ts`; validação em `src/lib/ingest-schemas.
 
 ## Rotas do site
 
-Todas leem do Prisma em tempo real (`force-dynamic`):
+Todas são `force-dynamic` (o build não toca no banco), mas os dados vêm de `unstable_cache` (tags `products`/`coupons` em `src/lib/cache-tags.ts`, revalidate 300 s). O `POST /api/ofertas` chama `revalidateTag(tag, "max")` após cada upsert. As listas ficam em `<Suspense>` com skeletons, então cabeçalho/hero renderizam antes do banco responder:
 
 - `/` — Ofertas Relâmpago (maior `discountPercentage`, 4) e Destaques da Semana (mais recentes, 8).
 - `/produtos` — até 100 ofertas (mais recentes), busca e filtro por loja.

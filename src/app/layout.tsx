@@ -16,6 +16,7 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false, // usada só no código do CouponCard
 });
 
 export const metadata: Metadata = {

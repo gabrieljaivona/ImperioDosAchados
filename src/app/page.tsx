@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowRight, Headphones, PackageOpen, Sparkles, Tag, Zap } from "lucide-react";
 import { AffiliateNotice } from "@/components/AffiliateNotice";
 import { CompactProductCard } from "@/components/CompactProductCard";
 import { JsonLd } from "@/components/JsonLd";
+import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import { VipCTAButton } from "@/components/VipCTAButton";
 import { getFeaturedProducts, getFlashProducts } from "@/lib/products";
 import { OG_IMAGE, SITE_URL } from "@/lib/site";
@@ -12,10 +14,16 @@ import type { Product } from "@/types";
 const GRID =
   "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
 
-function ProductGrid({ products }: { products: Product[] }) {
+function ProductGrid({
+  products,
+  preloadFirst = 0,
+}: {
+  products: Product[];
+  preloadFirst?: number;
+}) {
   return (
     <div className={GRID}>
-      {products.map((p) => (
+      {products.map((p, i) => (
         <CompactProductCard
           key={p.id}
           id={p.id}
@@ -26,9 +34,122 @@ function ProductGrid({ products }: { products: Product[] }) {
           discountPrice={p.price}
           store={p.store}
           affiliateLink={p.affiliateLink}
+          preload={i < preloadFirst}
         />
       ))}
     </div>
+  );
+}
+
+function SkeletonGrid({ count }: { count: number }) {
+  return (
+    <div className={GRID} role="status" aria-label="Carregando ofertas">
+      {Array.from({ length: count }, (_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+function FlashTitle() {
+  return (
+    <h2 className="mb-4 flex items-center gap-2 text-2xl font-extrabold text-imperio-text">
+      <Zap className="text-orange-500" />
+      Ofertas Relâmpago
+    </h2>
+  );
+}
+
+function FeaturedTitle() {
+  return (
+    <h2 className="mb-4 text-2xl font-extrabold text-imperio-text">
+      Destaques da Semana
+    </h2>
+  );
+}
+
+function HomeProductsSkeleton() {
+  return (
+    <>
+      <section className="mt-10 bg-imperio-surface py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <FlashTitle />
+          <SkeletonGrid count={4} />
+        </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <FeaturedTitle />
+        <SkeletonGrid count={8} />
+      </section>
+    </>
+  );
+}
+
+/** Parte que depende do banco: vem por streaming dentro do <Suspense>. */
+async function HomeProducts() {
+  const [flash, featured] = await Promise.all([
+    getFlashProducts(4),
+    getFeaturedProducts(8),
+  ]);
+
+  if (flash.length === 0 && featured.length === 0) {
+    return (
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-imperio-bronze bg-imperio-surface px-6 py-14 text-center">
+          <PackageOpen size={44} className="text-imperio-gold" />
+          <h2 className="text-xl font-bold text-imperio-text">
+            Novas ofertas chegando
+          </h2>
+          <p className="max-w-md text-sm text-imperio-muted">
+            Ainda não temos achadinhos por aqui. Entre no grupo VIP para
+            receber as ofertas assim que elas saírem.
+          </p>
+          <VipCTAButton />
+        </div>
+      </section>
+    );
+  }
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Ofertas em destaque",
+    itemListElement: [...flash, ...featured].map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: p.title,
+        image: p.image,
+        offers: {
+          "@type": "Offer",
+          url: p.affiliateLink,
+          price: p.price,
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+        },
+      },
+    })),
+  };
+
+  return (
+    <>
+      <JsonLd data={itemListJsonLd} />
+      {/* Ofertas Relâmpago */}
+      <section className="mt-10 bg-imperio-surface py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <FlashTitle />
+          <AffiliateNotice />
+          <ProductGrid products={flash} preloadFirst={4} />
+        </div>
+      </section>
+
+      {/* Destaques da Semana */}
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <FeaturedTitle />
+        <ProductGrid products={featured} />
+      </section>
+    </>
   );
 }
 
@@ -53,12 +174,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  const [flash, featured] = await Promise.all([
-    getFlashProducts(4),
-    getFeaturedProducts(8),
-  ]);
-
+export default function Home() {
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -67,32 +183,10 @@ export default async function Home() {
     inLanguage: "pt-BR",
     description: HOME_DESCRIPTION,
   };
-  const itemListJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: "Ofertas em destaque",
-    itemListElement: [...flash, ...featured].map((p, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      item: {
-        "@type": "Product",
-        name: p.title,
-        image: p.image,
-        offers: {
-          "@type": "Offer",
-          url: p.affiliateLink,
-          price: p.price,
-          priceCurrency: "BRL",
-          availability: "https://schema.org/InStock",
-        },
-      },
-    })),
-  };
 
   return (
     <div className="bg-imperio-bg transition-colors">
       <JsonLd data={websiteJsonLd} />
-      {flash.length + featured.length > 0 && <JsonLd data={itemListJsonLd} />}
       {/* Hero */}
       <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:py-20">
         <div className="flex flex-col items-start gap-5">
@@ -142,43 +236,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {flash.length === 0 && featured.length === 0 ? (
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-imperio-bronze bg-imperio-surface px-6 py-14 text-center">
-            <PackageOpen size={44} className="text-imperio-gold" />
-            <h2 className="text-xl font-bold text-imperio-text">
-              Novas ofertas chegando
-            </h2>
-            <p className="max-w-md text-sm text-imperio-muted">
-              Ainda não temos achadinhos por aqui. Entre no grupo VIP para
-              receber as ofertas assim que elas saírem.
-            </p>
-            <VipCTAButton />
-          </div>
-        </section>
-      ) : (
-        <>
-      {/* Ofertas Relâmpago */}
-      <section className="mt-10 bg-imperio-surface py-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <h2 className="mb-4 flex items-center gap-2 text-2xl font-extrabold text-imperio-text">
-            <Zap className="text-orange-500" />
-            Ofertas Relâmpago
-          </h2>
-          <AffiliateNotice />
-          <ProductGrid products={flash} />
-        </div>
-      </section>
-
-      {/* Destaques da Semana */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-        <h2 className="mb-4 text-2xl font-extrabold text-imperio-text">
-          Destaques da Semana
-        </h2>
-        <ProductGrid products={featured} />
-      </section>
-        </>
-      )}
+      <Suspense fallback={<HomeProductsSkeleton />}>
+        <HomeProducts />
+      </Suspense>
 
       {/* CTA final */}
       <section className="px-4 pb-16 text-center">

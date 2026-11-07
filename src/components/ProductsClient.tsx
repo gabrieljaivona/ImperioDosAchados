@@ -164,7 +164,7 @@ export function ProductsClient({ products }: { products: Product[] }) {
       {filtered.length > 0 ? (
         <>
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {displayedProducts.map((p) => (
+          {displayedProducts.map((p, i) => (
             <CompactProductCard
               key={p.id}
               id={p.id}
@@ -175,6 +175,7 @@ export function ProductsClient({ products }: { products: Product[] }) {
               discountPrice={p.price}
               store={p.store}
               affiliateLink={p.affiliateLink}
+              preload={i < 4}
             />
           ))}
         </section>

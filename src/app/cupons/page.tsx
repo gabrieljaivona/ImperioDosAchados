@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Ticket } from "lucide-react";
 import { AffiliateNotice } from "@/components/AffiliateNotice";
+import { CouponCardSkeleton } from "@/components/CouponCardSkeleton";
 import { CuponsClient } from "@/components/CuponsClient";
 import { JsonLd } from "@/components/JsonLd";
 import { getCoupons } from "@/lib/coupons";
@@ -28,7 +30,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function Cupons() {
+async function CouponsList() {
   const coupons = await getCoupons();
 
   const jsonLd = {
@@ -53,8 +55,41 @@ export default async function Cupons() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-7xl bg-imperio-bg p-4 sm:p-6">
+    <>
       <JsonLd data={jsonLd} />
+      <CuponsClient coupons={coupons} />
+    </>
+  );
+}
+
+function CouponsListSkeleton() {
+  return (
+    <div
+      role="status"
+      aria-label="Carregando cupons"
+      className="flex flex-col gap-6"
+    >
+      <div className="h-11 animate-pulse rounded-xl border border-imperio-bronze bg-imperio-surface" />
+      <div className="flex gap-2 overflow-hidden">
+        {Array.from({ length: 4 }, (_, i) => (
+          <div
+            key={i}
+            className="h-8 w-20 shrink-0 animate-pulse rounded-full bg-imperio-bronze/30"
+          />
+        ))}
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }, (_, i) => (
+          <CouponCardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function Cupons() {
+  return (
+    <div className="mx-auto w-full max-w-7xl bg-imperio-bg p-4 sm:p-6">
       <header className="mb-6">
         <h1 className="flex items-center gap-2 text-2xl font-extrabold text-imperio-text sm:text-3xl">
           <Ticket className="text-imperio-gold" />
@@ -67,7 +102,9 @@ export default async function Cupons() {
       </header>
 
       <AffiliateNotice />
-      <CuponsClient coupons={coupons} />
+      <Suspense fallback={<CouponsListSkeleton />}>
+        <CouponsList />
+      </Suspense>
     </div>
   );
 }
