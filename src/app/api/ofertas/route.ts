@@ -1,5 +1,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
+import { revalidateTag } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
+import { COUPONS_TAG, PRODUCTS_TAG } from "@/lib/cache-tags";
 import { prisma } from "@/lib/db";
 import { couponSchema, productSchema } from "@/lib/ingest-schemas";
 
@@ -80,6 +82,7 @@ export async function POST(req: NextRequest) {
         create: data,
         update: data,
       });
+      revalidateTag(COUPONS_TAG, "max");
       return NextResponse.json({ ok: true, type: "coupon", id: coupon.id });
     } catch (err) {
       console.error("[api/ofertas] falha ao salvar cupom", err);
@@ -98,6 +101,7 @@ export async function POST(req: NextRequest) {
       create: data,
       update: data,
     });
+    revalidateTag(PRODUCTS_TAG, "max");
     return NextResponse.json({ ok: true, type: "product", id: product.id });
   } catch (err) {
     console.error("[api/ofertas] falha ao salvar produto", err);

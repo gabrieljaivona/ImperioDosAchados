@@ -14,6 +14,8 @@ interface CompactProductCardProps {
   discountPercentage: number;
   store: Store;
   affiliateLink: string;
+  /** true nos primeiros cards visíveis (LCP). */
+  preload?: boolean;
 }
 
 function formatPrice(value: number) {
@@ -32,6 +34,7 @@ export function CompactProductCard({
   discountPercentage,
   store,
   affiliateLink,
+  preload = false,
 }: CompactProductCardProps) {
   const storeConfig = getStoreConfig(store);
 
@@ -75,6 +78,7 @@ export function CompactProductCard({
           alt={title}
           fill
           unoptimized
+          preload={preload}
           className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
           sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
         />
