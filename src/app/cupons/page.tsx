@@ -5,7 +5,7 @@ import { CuponsClient } from "@/components/CuponsClient";
 import { JsonLd } from "@/components/JsonLd";
 import { getCoupons } from "@/lib/coupons";
 import { getStoreConfig } from "@/lib/stores";
-import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_URL } from "@/lib/site";
 
 const TITLE = "Cupons de Desconto Ativos";
 const DESCRIPTION =
@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     title: `${TITLE} | Império Dos Achados`,
     description: DESCRIPTION,
     url: "/cupons",
+    images: [OG_IMAGE],
   },
 };
 

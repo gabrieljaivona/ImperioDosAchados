@@ -3,6 +3,7 @@ import { Flame } from "lucide-react";
 import { AffiliateNotice } from "@/components/AffiliateNotice";
 import { ProductsClient } from "@/components/ProductsClient";
 import { getProducts } from "@/lib/products";
+import { OG_IMAGE } from "@/lib/site";
 
 const TITLE = "Todas as Promoções e Achadinhos";
 const DESCRIPTION =
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
     title: `${TITLE} | Império Dos Achados`,
     description: DESCRIPTION,
     url: "/produtos",
+    images: [OG_IMAGE],
   },
 };
 

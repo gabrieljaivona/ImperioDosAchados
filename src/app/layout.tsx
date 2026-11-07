@@ -5,7 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MetaPixel } from "@/components/MetaPixel";
 import { CookieBanner } from "@/components/CookieBanner";
-import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_URL, TWITTER_IMAGE } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,11 +32,13 @@ export const metadata: Metadata = {
     title: "Império Dos Achados",
     description: "As melhores ofertas da internet em um só lugar.",
     url: "/",
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "Império Dos Achados",
     description: "As melhores ofertas da internet em um só lugar.",
+    images: [TWITTER_IMAGE],
   },
 };
 
