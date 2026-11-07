@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Check, Copy, ExternalLink } from "lucide-react";
+import { trackCouponClick } from "@/lib/meta-pixel";
 import { getStoreConfig } from "@/lib/stores";
 import type { Coupon } from "@/types";
 
@@ -21,12 +22,27 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
   }, [copied]);
 
   async function handleCopy() {
+    trackCouponClick({
+      store: coupon.store,
+      title: coupon.title,
+      code: coupon.code,
+      action: "copy",
+    });
     try {
       await navigator.clipboard.writeText(coupon.code);
       setCopied(true);
     } catch {
       // Clipboard indisponível (ex.: contexto não seguro); o código segue visível no card.
     }
+  }
+
+  function handleGoToStore() {
+    trackCouponClick({
+      store: coupon.store,
+      title: coupon.title,
+      code: coupon.code,
+      action: "go_to_store",
+    });
   }
 
   return (
@@ -62,7 +78,7 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
           <button
             type="button"
             onClick={handleCopy}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-imperio-bronze px-3 py-2 text-sm font-medium text-imperio-text transition-colors hover:border-imperio-gold"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-imperio-bronze px-3 py-2 text-sm font-medium text-imperio-text transition hover:border-imperio-gold active:scale-95"
           >
             {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
             {copied ? "Copiado!" : "Copiar Código"}
@@ -72,9 +88,14 @@ export function CouponCard({ coupon }: { coupon: Coupon }) {
           </button>
           <a
             href={coupon.link}
+            onClick={handleGoToStore}
+            // Botão do meio do mouse abre em nova aba sem disparar onClick.
+            onAuxClick={(e) => {
+              if (e.button === 1) handleGoToStore();
+            }}
             target="_blank"
             rel="noopener noreferrer sponsored"
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-imperio-gold px-3 py-2 text-sm font-bold text-zinc-950 transition hover:brightness-110"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-imperio-gold px-3 py-2 text-sm font-bold text-zinc-950 transition hover:brightness-110 active:scale-95"
           >
             Usar Cupom
             <span className="sr-only"> (abre em nova aba)</span>

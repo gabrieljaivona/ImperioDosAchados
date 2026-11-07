@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import { ExternalLink, Tag } from "lucide-react";
+import { trackOfferClick } from "@/lib/meta-pixel";
 import { getStoreConfig, type Store } from "@/lib/stores";
 
 interface CompactProductCardProps {
+  id: string;
   imageUrl: string;
   title: string;
   originalPrice?: number | null;
@@ -20,6 +24,7 @@ function formatPrice(value: number) {
 }
 
 export function CompactProductCard({
+  id,
   imageUrl,
   title,
   originalPrice,
@@ -30,12 +35,26 @@ export function CompactProductCard({
 }: CompactProductCardProps) {
   const storeConfig = getStoreConfig(store);
 
+  function handleTrack() {
+    trackOfferClick({
+      store,
+      title,
+      discount: discountPercentage,
+      id,
+    });
+  }
+
   return (
     <a
       href={affiliateLink}
+      onClick={handleTrack}
+      // Botão do meio do mouse abre em nova aba sem disparar onClick.
+      onAuxClick={(e) => {
+        if (e.button === 1) handleTrack();
+      }}
       target="_blank"
       rel="noopener noreferrer sponsored"
-      className="group flex flex-col overflow-hidden rounded-xl border border-imperio-bronze bg-imperio-surface transition-colors hover:border-imperio-gold"
+      className="group flex flex-col overflow-hidden rounded-xl border border-imperio-bronze bg-imperio-surface transition duration-150 hover:-translate-y-0.5 hover:border-imperio-gold hover:shadow-lg active:scale-95"
     >
       <div className="relative aspect-square w-full bg-imperio-bg">
         <span

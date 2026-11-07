@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     url: "/",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Império Dos Achados",
     description: "As melhores ofertas da internet em um só lugar.",
   },

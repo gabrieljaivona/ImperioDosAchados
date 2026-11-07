@@ -3,8 +3,10 @@ import Link from "next/link";
 import { ArrowRight, Headphones, PackageOpen, Sparkles, Tag, Zap } from "lucide-react";
 import { AffiliateNotice } from "@/components/AffiliateNotice";
 import { CompactProductCard } from "@/components/CompactProductCard";
+import { JsonLd } from "@/components/JsonLd";
 import { VipCTAButton } from "@/components/VipCTAButton";
 import { getFeaturedProducts, getFlashProducts } from "@/lib/products";
+import { SITE_URL } from "@/lib/site";
 import type { Product } from "@/types";
 
 const GRID =
@@ -16,6 +18,7 @@ function ProductGrid({ products }: { products: Product[] }) {
       {products.map((p) => (
         <CompactProductCard
           key={p.id}
+          id={p.id}
           imageUrl={p.image}
           title={p.title}
           originalPrice={p.originalPrice}
@@ -29,11 +32,22 @@ function ProductGrid({ products }: { products: Product[] }) {
   );
 }
 
+const HOME_TITLE = "Império Dos Achados | Promoções, Cupons e Achadinhos";
+const HOME_DESCRIPTION =
+  "Promoções relâmpago e cupons de Shopee, Amazon, Mercado Livre e Magalu, atualizados todo dia. Entre no grupo VIP e economize antes que acabe!";
+
 export const metadata: Metadata = {
-  title: { absolute: "Império Dos Achados | Ofertas, Cupons e Achadinhos" },
-  description:
-    "Ofertas relâmpago e cupons de Shopee, Amazon, Mercado Livre e Magalu, atualizados todo dia. Entre no grupo VIP e economize.",
+  title: { absolute: HOME_TITLE },
+  description: HOME_DESCRIPTION,
   alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Império Dos Achados",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    url: "/",
+  },
 };
 
 export const dynamic = "force-dynamic";
@@ -44,8 +58,40 @@ export default async function Home() {
     getFeaturedProducts(8),
   ]);
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Império Dos Achados",
+    url: SITE_URL,
+    inLanguage: "pt-BR",
+    description: HOME_DESCRIPTION,
+  };
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Ofertas em destaque",
+    itemListElement: [...flash, ...featured].map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: p.title,
+        image: p.image,
+        offers: {
+          "@type": "Offer",
+          url: p.affiliateLink,
+          price: p.price,
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+        },
+      },
+    })),
+  };
+
   return (
     <div className="bg-imperio-bg transition-colors">
+      <JsonLd data={websiteJsonLd} />
+      {flash.length + featured.length > 0 && <JsonLd data={itemListJsonLd} />}
       {/* Hero */}
       <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:py-20">
         <div className="flex flex-col items-start gap-5">

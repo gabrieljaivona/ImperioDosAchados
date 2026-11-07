@@ -4,9 +4,22 @@ import { AffiliateNotice } from "@/components/AffiliateNotice";
 import { ProductsClient } from "@/components/ProductsClient";
 import { getProducts } from "@/lib/products";
 
+const TITLE = "Todas as Promoções e Achadinhos";
+const DESCRIPTION =
+  "Busque e filtre as melhores promoções de Shopee, Amazon, Mercado Livre e Magalu. Preços baixos atualizados todo dia!";
+
 export const metadata: Metadata = {
-  title: "Todas as Ofertas e Achadinhos",
-  description: "Busque e filtre as melhores ofertas por loja.",
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: "/produtos" },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Império Dos Achados",
+    title: `${TITLE} | Império Dos Achados`,
+    description: DESCRIPTION,
+    url: "/produtos",
+  },
 };
 
 export const dynamic = "force-dynamic";
