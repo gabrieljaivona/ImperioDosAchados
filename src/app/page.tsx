@@ -6,7 +6,7 @@ import { CompactProductCard } from "@/components/CompactProductCard";
 import { JsonLd } from "@/components/JsonLd";
 import { VipCTAButton } from "@/components/VipCTAButton";
 import { getFeaturedProducts, getFlashProducts } from "@/lib/products";
-import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_URL } from "@/lib/site";
 import type { Product } from "@/types";
 
 const GRID =
@@ -47,6 +47,7 @@ export const metadata: Metadata = {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
     url: "/",
+    images: [OG_IMAGE],
   },
 };
 
