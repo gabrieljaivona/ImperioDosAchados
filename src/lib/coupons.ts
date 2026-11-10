@@ -5,6 +5,19 @@ import { COUPONS_TAG, DATA_REVALIDATE } from "@/lib/cache-tags";
 import type { Store } from "@/lib/stores";
 import type { Coupon } from "@/types";
 
+// "en-CA" formata como AAAA-MM-DD, o formato que o CouponCard espera.
+const brazilDate = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Sao_Paulo",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+/** Data no fuso de Brasília (toISOString usaria UTC e poderia virar o dia seguinte). */
+function toBrazilDate(date: Date) {
+  return brazilDate.format(date);
+}
+
 /**
  * Cupons não expirados. Com o cache, um cupom recém-expirado pode aparecer
  * por até DATA_REVALIDATE segundos.
@@ -25,12 +38,12 @@ export const getCoupons = unstable_cache(
         ...(store && { store }),
         OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
       take: 200,
     });
     return rows.map((c) => ({
       ...c,
-      expiresAt: c.expiresAt ? c.expiresAt.toISOString().slice(0, 10) : null,
+      expiresAt: c.expiresAt ? toBrazilDate(c.expiresAt) : null,
     }));
   },
   ["coupons:list"],

@@ -38,10 +38,12 @@ Arquivo: `src/app/api/ofertas/route.ts`; validação em `src/lib/ingest-schemas.
 
 Todas são `force-dynamic` (o build não toca no banco), mas os dados vêm de `unstable_cache` (tags `products`/`coupons` em `src/lib/cache-tags.ts`, revalidate 300 s). O `POST /api/ofertas` chama `revalidateTag(tag, "max")` após cada upsert. As listas ficam em `<Suspense>` com skeletons, então cabeçalho/hero renderizam antes do banco responder:
 
-- `/` — Ofertas Relâmpago (maior `discountPercentage`, 4) e Destaques da Semana (mais recentes, 8).
-- `/produtos` — até 100 ofertas (mais recentes), busca e filtro por loja.
+- `/` — Ofertas Relâmpago (maior `discountPercentage`, 4) e Destaques da Semana (mais recentes, 8, excluindo os IDs que já saíram em Relâmpago).
+- `/produtos` — até 100 ofertas (mais recentes), busca e filtro por loja/categoria.
 - `/cupons` — cupons não expirados (`expiresAt` nulo ou futuro), filtro por loja.
 - `/sobre`, `/privacidade`, `/termos`, `/sitemap.xml`, `/robots.txt`, `/api/ofertas`.
+
+Produtos: só aparecem ofertas com `updatedAt` nos últimos **3 dias** (o bot precisa reenviar para manter no ar) e "mais recentes" = `updatedAt desc`, então um upsert do bot devolve a oferta ao topo. Datas de validade dos cupons são formatadas no fuso `America/Sao_Paulo`.
 
 Camada de dados: `src/lib/products.ts` (`getProducts`, `getFeaturedProducts`, `getFlashProducts`) e `src/lib/coupons.ts` (`getCoupons`). Não há mais mocks/JSON estáticos.
 
