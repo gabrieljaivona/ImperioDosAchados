@@ -87,10 +87,12 @@ function HomeProductsSkeleton() {
 
 /** Parte que depende do banco: vem por streaming dentro do <Suspense>. */
 async function HomeProducts() {
-  const [flash, featured] = await Promise.all([
-    getFlashProducts(4),
-    getFeaturedProducts(8),
-  ]);
+  // Sequencial de propósito: Destaques exclui o que já saiu em Relâmpago.
+  const flash = await getFlashProducts(4);
+  const featured = await getFeaturedProducts(
+    8,
+    flash.map((p) => p.id)
+  );
 
   if (flash.length === 0 && featured.length === 0) {
     return (

@@ -29,7 +29,7 @@ model Product {
   updatedAt          DateTime @updatedAt
 
   @@unique([store, externalId])
-  @@index([createdAt])
+  @@index([updatedAt])
   @@index([discountPercentage])
   @@index([category])
 }
@@ -47,4 +47,5 @@ model Coupon {
 
   @@unique([store, code])
   @@index([expiresAt])
+  @@index([updatedAt])
 }
